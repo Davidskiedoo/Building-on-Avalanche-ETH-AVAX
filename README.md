@@ -15,19 +15,19 @@ Minting New Tokens
 * Only the owner of the contract can mint new tokens. This can be used to reward players within the game.
 
 Transferring Tokens
-Players can transfer their tokens to others using the transferDGN function.
+* Players can transfer their tokens to others using the transferDGN function.
 
 Redeeming Tokens
-Players can redeem their tokens for items in the in-game store. Each item has a predefined price.
+* Players can redeem their tokens for items in the in-game store. Each item has a predefined price.
 
 Burning Tokens
-Players can burn tokens they own that are no longer needed.
+* Players can burn tokens they own that are no longer needed.
 
 Checking Token Balance
-Players can check their token balance at any time.
+* Players can check their token balance at any time.
 
 Viewing Shop Items
-Players can view the items available for redemption in the shop.
+* Players can view the items available for redemption in the shop.
 
 ## Deployment
 * Configure your development environment for the Avalanche network.
