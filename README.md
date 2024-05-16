@@ -12,7 +12,7 @@ The DegenToken smart contract enables a game platform to manage a custom ERC20 t
 
 ## Usage
 Minting New Tokens
-Only the owner of the contract can mint new tokens. This can be used to reward players within the game.
+* Only the owner of the contract can mint new tokens. This can be used to reward players within the game.
 
 Transferring Tokens
 Players can transfer their tokens to others using the transferDGN function.
