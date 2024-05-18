@@ -4,11 +4,13 @@ pragma solidity 0.8.25;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract DegenToken is ERC20, Ownable {
-
+contract DegenToken is ERC20 {
+    address private owner;
     mapping(uint256 => uint256) public leagueTokens;
+    mapping(address => mapping(uint256 => uint256)) public redeemedItems;
 
-   constructor() ERC20("Degen", "DGN") Ownable(msg.sender) {
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
+        owner = msg.sender;
         leagueTokens[1] = 10000;
         leagueTokens[2] = 8000;
         leagueTokens[3] = 7000;
@@ -17,29 +19,45 @@ contract DegenToken is ERC20, Ownable {
         leagueTokens[6] = 1000;
     }
 
-    function mintToken(address _to, uint256 _amount) public onlyOwner {
-        _mint(_to, _amount);
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
     }
 
-    function burnToken(uint256 _amount) public {
-        require(balanceOf(msg.sender) >= _amount, "Burn Failed: Insufficient Tokens.");
-        approve(msg.sender, _amount);
-        _burn(msg.sender, _amount);
+    function mint(address account, uint256 amount) public onlyOwner {
+        require(amount <= 10000, "Minting amount exceeds 10,000 tokens limit");
+        _mint(account, amount);
     }
 
-    function redeemItems(uint256 _item) public {
-        require(_item <= 6, "Item is not available.");
-        require(balanceOf(msg.sender) >= leagueTokens[_item], "Redeem Failed: You Have Insufficient League Tokens.");
-        transfer(owner(), leagueTokens[_item]);
+    function burnToken(address account, uint256 _amount) public {
+    require(balanceOf(account) >= _amount, "Burn Failed: Insufficient Tokens.");
+    _burn(account, _amount);
     }
 
-     function getBalance() external view returns (uint256) {
-        return this.balanceOf(msg.sender);
-    }
-     
-    function degenItems() external pure returns (string memory) {
-        string memory obtainableItems = "Obtainable Items: {1} Degen Challenger Frame (10000) {2} Degen Grand Master Frame (8000) {3}  Degen Master Frame (7000) {4}  Degen Diamond Frame (5000) {5}  Degen Exclusive Icon (3000) {6}  Victorious Degen Skin(1000)";
-        return obtainableItems;
+
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        require(recipient != address(0), "ERC20: transfer to the zero address");
+        _transfer(msg.sender, recipient, amount);
+        return true;
     }
 
+    function transferRewards(address from, address to, uint256 amount) public {
+        require(balanceOf(from) >= amount, "Insufficient balance to transfer rewards");
+        transferFrom(from, to, amount);
+    }
+
+
+    function redeem(uint256 itemId) public {
+        uint256 itemPrice = leagueTokens[itemId];
+        require(itemPrice > 0, "Item does not exist");
+        require(balanceOf(msg.sender) >= itemPrice, "Insufficient balance to redeem item");
+
+        _burn(msg.sender, itemPrice);
+        
+        redeemedItems[msg.sender][itemId]++;
+    }
+    function viewRedeemedItems(address account, uint256 itemId) public view returns (uint256) {
+        return redeemedItems[account][itemId];
+    }
+  
 }
