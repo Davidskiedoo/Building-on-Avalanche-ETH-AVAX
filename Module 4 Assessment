@@ -41,21 +41,21 @@ contract DegenToken is ERC20 {
         return true;
     }
 
-    function transferRewards(address from, address to, uint256 amount) public {
-        require(balanceOf(from) >= amount, "Insufficient balance to transfer rewards");
-        transferFrom(from, to, amount);
-    }
-
+    function transferRewards(address to, uint256 itemId) public {
+        uint256 redeemedItemCount = redeemedItems[msg.sender][itemId];
+        require(redeemedItemCount > 0, "Insufficient redeemed items to transfer");
+        redeemedItems[msg.sender][itemId]--;
+        redeemedItems[to][itemId]++;
+}
 
     function redeem(uint256 itemId) public {
         uint256 itemPrice = leagueTokens[itemId];
         require(itemPrice > 0, "Item does not exist");
         require(balanceOf(msg.sender) >= itemPrice, "Insufficient balance to redeem item");
-
         _burn(msg.sender, itemPrice);
-        
         redeemedItems[msg.sender][itemId]++;
     }
+    
     function viewRedeemedItems(address account, uint256 itemId) public view returns (uint256) {
         return redeemedItems[account][itemId];
     }
